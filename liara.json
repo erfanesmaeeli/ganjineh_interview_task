@@ -1,0 +1,15 @@
+{
+  "platform": "django",
+  "app": "ganjineh-task",
+
+  "disks": [{
+      "name": "media",
+      "mountTo": "media"
+    },
+
+    {
+      "name": "temp",
+      "mountTo": "/tmp"
+    }
+  ]
+}
