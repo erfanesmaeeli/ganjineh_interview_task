@@ -9,11 +9,12 @@ from django.contrib.auth.models import Group
 @register(User)
 class UserAdmin(AbstractUserAdmin):
     
-    list_display = ('username', 'first_name', 'last_name', 'email',
+    list_display = ('username', 'first_name', 'last_name', 'get_user_subscription', 
+                    'credits', 'email',
                     'is_active', 'is_staff', 'is_superuser', 'date_joined'
     )
 
-    list_filter = ('is_active', 'is_superuser')
+    list_filter = ('is_active', 'is_superuser', 'subscriptions')
     search_fields = ('username', 'first_name', 'last_name', 'email')
     list_display_links = ('first_name', 'last_name', 'username')
     ordering = ('-is_superuser', '-is_staff', '-date_joined')
@@ -56,3 +57,15 @@ class UserAdmin(AbstractUserAdmin):
             )
         })
     )
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(RegisteredSubscription)
+class RegisteredSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'subscription', 'credits', 'status', \
+                    'credits_period', 'is_active', 'credits_added', 'expire_at')
+    list_filter = ('user', 'subscription', 'status', 'credits_added')
+    list_editable = ('status', )

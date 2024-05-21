@@ -37,7 +37,7 @@ DEFAULT_APPS = [
 LOCAL_APPS = [
     'main',
     'accounts',
-    'demo',
+    'coins',
 ]
 
 THIRD_PARTY_APPS = [
@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
     'admin_interface',
     'colorfield',
     'rest_framework',
+    'import_export',
 ]
 
 INSTALLED_APPS = THIRD_PARTY_APPS + LOCAL_APPS + DEFAULT_APPS

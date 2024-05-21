@@ -13,9 +13,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Accounts api Urls 
-    path('api/users/', include('accounts.urls')),
+    path('api/users/', include('accounts.urls', namespace='accounst')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Coins api Urls 
+    path('api/coins/', include('coins.urls', namespace='coins')),
 ]
 
 
