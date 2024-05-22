@@ -11,7 +11,7 @@ class UserAdmin(AbstractUserAdmin):
     
     list_display = ('username', 'first_name', 'last_name', 'get_user_subscription', 
                     'credits', 'email',
-                    'is_active', 'is_staff', 'is_superuser', 'date_joined'
+                    'is_active',  'access_all_coins', 'is_staff', 'is_superuser', 'date_joined'
     )
 
     list_filter = ('is_active', 'is_superuser', 'subscriptions')

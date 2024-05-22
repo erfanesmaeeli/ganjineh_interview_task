@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 
 
 @receiver(pre_save, sender=RegisteredSubscription)
-def update_registered_subscription_expire_at(sender, instance , **kwargs):
+def update_registered_subscription(sender, instance , **kwargs):
     if instance.status == 'approved':
         instance.is_active = True
         
-        if instance.subscription.level == 1 and not instance.credits_added:
+        if instance.subscription.level == 'gold' and not instance.credits_added:
             instance.user.credits = instance.credits
             instance.credits_added = True
             instance.user.save()

@@ -15,4 +15,4 @@ class CoinPriceAdmin(admin.ModelAdmin):
 
 @admin.register(CoinPriceFile)
 class CoinPriceFileAdmin(admin.ModelAdmin):
-    list_display = ('coin',  )
+    list_display = ('coin',  'created_at')

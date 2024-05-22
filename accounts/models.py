@@ -7,18 +7,23 @@ from jalali_date import datetime2jalali, date2jalali
 from datetime import datetime, timedelta
 from django.utils.translation import gettext as _
 from main.models import TimeGeneral
+from main.utils import send_email
 from . utils import USER_DEFAULT_CREDITS
+from coins.models import Coin
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
+import jdatetime
 
 
 class Subscription(TimeGeneral):
     LEVEL_CHOICES = [
-        (1, 'Gold'),
-        (2, 'Silver'),
+        ('gold', 'Gold'),
+        ('silver', 'Silver'),
     ]
     title = models.CharField(max_length=128, null=True)
-    level = models.PositiveSmallIntegerField(choices=LEVEL_CHOICES, null=True)
+    level = models.CharField(max_length=10, choices=LEVEL_CHOICES, null=True)
     days_to_expire = models.PositiveIntegerField(null=True, )
-    # access_tokens = 
+
 
     class Meta:
         ordering = ('level',)
@@ -51,6 +56,13 @@ class User(AbstractUser):
                 return subscription
         return None
     
+    def access_all_coins(self):
+        user_subscription = self.get_user_subscription()
+        if user_subscription:
+            return True
+        return False
+    access_all_coins.boolean = True
+    
 
 class RegisteredSubscription(TimeGeneral):
     STATUS_CHOICES = [
@@ -77,3 +89,58 @@ class RegisteredSubscription(TimeGeneral):
 
     def __str__(self) -> str:
         return f"{self.user} - {self.subscription} "
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__pre_status = self.status
+        self.__pre_is_active = self.is_active
+
+    def save(self, *args, **kwargs):
+        jalali_today = jdatetime.datetime.today().strftime('%H:%M - %Y/%m/%d')
+        today = datetime.today().date()
+        email_template = 'accounts/subscription_email_text.html'
+        user = self.user
+        if self.__pre_status != self.status:
+            if self.status == 'approved':
+                email_subject = 'تایید سفارش'
+                body = f"درخواست اشتراک {self.subscription.title} با موفقیت تایید و بر روی حساب کاربری شما فعال گردید."
+                data = {
+                    'today' :jalali_today,
+                    'email_subject' : email_subject,
+                    'user' : user,
+                    'email_body': body
+                }
+                send_email(data=data, to_user=user.email, subject=email_subject, \
+                           email_template=email_template)
+            elif self.status == 'rejected':
+                email_subject = 'عدم تایید سفارش'
+                body = f"درخواست اشتراک {self.subscription.title} عدم تایید شد. در صورت نیاز با پشتیبان تماس بگیرید."
+                data = {
+                    'today' :jalali_today,
+                    'email_subject' : email_subject,
+                    'user' : user,
+                    'email_body': body
+                }
+                send_email(data=data, to_user=user.email, subject=email_subject, \
+                           email_template=email_template)
+        if self.__pre_is_active != self.is_active:
+            if not self.is_active:
+                if today > self.expire_at:
+                    email_subject = 'منقضی شدن زمان اشتراک'
+                    body = f"مهلت زمانی اشتراک {self.subscription.title} به اتمام رسیده است. جهت ثبت سفارش جدید از طریق وب سایت مراجعه فرمایید."
+                    data = {
+                        'today' :today,
+                        'email_subject' : email_subject,
+                        'user' : user,
+                        'email_body': body
+                    }
+                elif self.credits_period == 'unlimited':
+                    email_subject = 'اتمام کردیت اشتراک'
+                    body = "تعداد کردیت‌های اشتراک {self.subscription.title} به اتمام رسیده است. جهت ثبت سفارش جدید از طریق وب سایت مراجعه فرمایید."
+                    data = {
+                        'today' :today,
+                        'email_subject' : email_subject,
+                        'user' : user,
+                        'email_body': body
+                    }
+        super().save(*args, **kwargs)

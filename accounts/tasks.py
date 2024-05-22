@@ -19,7 +19,7 @@ def check_user_subscriptions():
                 user_subscription.save()
                 user.credits = USER_DEFAULT_CREDITS
 
-            elif user_subscription.subscription.level == 1 and \
+            elif user_subscription.subscription.level == 'gold' and \
                 user_subscription.credits_period == 'daily':
                     user.credits = user_subscription.credits
         else:
