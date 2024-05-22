@@ -4,5 +4,5 @@ from .views import *
 app_name = 'coins'
 
 urlpatterns = [
-    # path('upload/', CSVUploadView.as_view(), name='csv-upload'),
+    path('coins/', CoinView.as_view(), name='coins'),
 ]
