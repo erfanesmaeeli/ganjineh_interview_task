@@ -22,7 +22,6 @@
 * کاربر معمولی بازه های انتخابیش ماکسیمم میتونه یک ماه باشه ولی کاربر ویژه میتونه بازه بیشتری رو انتخاب کنه
 * یک api مخصوص هم داریم برای کاربر ویژه که ۱۰ کردیت مصرف میکنه که بهش بازه های پر سود رو میگه که ماکسیمم ۶ بازه پر سود توی اون بازه ای که مشخص میکنه میشه و دقیقن همین api که باز پر ضرر رو میگه
 
-❤
 ===
 
 A project Django project .
@@ -73,7 +72,19 @@ A project Django project .
 
 </div>
 
-<h3>Now you can Login with admin:admin</h3>
+<h3>Now you can Login in http://127.0.0.1:8085/</h3>
+<div class="highlight highlight-source-shell">
+
+  ```
+  $ username: admin
+  ```
+  <br>
+  
+  ```
+  $ password: admin
+  ```
+</div>
+
 
 <h2>
   Run without Docker
