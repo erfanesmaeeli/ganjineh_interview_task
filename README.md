@@ -204,5 +204,27 @@ A project Django project .
 <br>
 
 <h2>
+  Start Redis Server
+</h2>
+<br>
+
+<h2>
+  Run celery workers and beats
+</h2>
+<div class="highlight highlight-source-shell">
+
+  ```
+  $ celery -A core worker --loglevel=info
+  ```
+
+  <br>
+
+   ```
+  $ celery -A core beat --loglevel=info
+  ```
+</div>
+<br>
+
+<h2>
   Enjoy it :)
 </h2>
