@@ -30,6 +30,7 @@ class UserAdmin(AbstractUserAdmin):
 
         ('دسترسی‌ها', {
             'fields': (
+                'credits',
                 'is_active',
                 'is_staff',
                 'is_superuser',
@@ -50,6 +51,7 @@ class UserAdmin(AbstractUserAdmin):
 
         ('دسترسی‌ها', {
             'fields': (
+                'credits',
                 'is_active',
                 'is_staff',
                 'is_superuser',

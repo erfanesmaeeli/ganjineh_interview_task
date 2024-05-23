@@ -4,7 +4,7 @@ from . models import *
 
 @admin.register(Coin)
 class CoinAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'credits')
 
 
 @admin.register(CoinPrice)

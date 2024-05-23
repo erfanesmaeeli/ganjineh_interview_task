@@ -15,9 +15,15 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'full_amniat')
 DEBUG = os.getenv('DEBUG', True)
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'
+                 # Add other allowed hosts as needed
+]
 
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8085',
+    'http://localhost:8085',
+    # Add other trusted origins as needed
+]
 
 ROOT_URLCONF = "core.urls"
 
@@ -46,6 +52,9 @@ THIRD_PARTY_APPS = [
     'colorfield',
     'rest_framework',
     'import_export',
+    'drf_yasg',
+    'django_filters',
+    'django_celery_beat',
 ]
 
 INSTALLED_APPS = THIRD_PARTY_APPS + LOCAL_APPS + DEFAULT_APPS
@@ -91,20 +100,13 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 # ------------------------- DATABASE -------------------------
 # ------------------------------------------------------------
-if os.getenv('DB_ENGINE', 'DB_ENGINE is not set.') == 'sqlite3' and os.getenv('DEBUG'):
-    DATABASES = {
-        'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-        } 
-}
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # ------------------ Password validation ---------------------
 # ------------------------------------------------------------
@@ -257,3 +259,20 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+
+
+CELERY_BEAT_SCHEDULE = {
+    'check_user_subscriptions': {
+        'task': 'accounts.tasks.check_user_subscriptions',
+        'schedule': timedelta(seconds=10),
+    },
+}
+
+# Celery settings
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'

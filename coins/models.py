@@ -4,6 +4,7 @@ from main.models import TimeGeneral
 
 class Coin(TimeGeneral):
     name = models.CharField(max_length=64, null=True)
+    credits = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         ordering = ('-created_at',)

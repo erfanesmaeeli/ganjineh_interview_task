@@ -37,7 +37,7 @@ class Subscription(TimeGeneral):
 
 
 class User(AbstractUser):
-    credits = models.PositiveBigIntegerField(default=USER_DEFAULT_CREDITS)
+    credits = models.BigIntegerField(default=USER_DEFAULT_CREDITS)
     
     class Meta:
         verbose_name_plural = _('users')
@@ -62,6 +62,11 @@ class User(AbstractUser):
             return True
         return False
     access_all_coins.boolean = True
+
+
+    def decrement_credits(self, amount):
+        self.credits -= amount
+        self.save()
     
 
 class RegisteredSubscription(TimeGeneral):
@@ -102,6 +107,17 @@ class RegisteredSubscription(TimeGeneral):
         user = self.user
         if self.__pre_status != self.status:
             if self.status == 'approved':
+                self.is_active = True
+                if self.subscription.level == 'gold' and not self.credits_added:
+                    self.user.credits = self.credits
+                    self.credits_added = True
+                    self.user.save()
+
+                if not self.expire_at:
+                    days_to_expire = self.subscription.days_to_expire
+                    expire_at = today + timedelta(days=days_to_expire)
+                    self.expire_at = expire_at
+
                 email_subject = 'تایید سفارش'
                 body = f"درخواست اشتراک {self.subscription.title} با موفقیت تایید و بر روی حساب کاربری شما فعال گردید."
                 data = {
@@ -113,6 +129,7 @@ class RegisteredSubscription(TimeGeneral):
                 send_email(data=data, to_user=user.email, subject=email_subject, \
                            email_template=email_template)
             elif self.status == 'rejected':
+                self.is_active = False
                 email_subject = 'عدم تایید سفارش'
                 body = f"درخواست اشتراک {self.subscription.title} عدم تایید شد. در صورت نیاز با پشتیبان تماس بگیرید."
                 data = {

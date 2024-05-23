@@ -4,8 +4,8 @@ from django.db.models import *
 import re
 import sys, os
 from datetime import datetime, timedelta
-from . models import User, RegisteredSubscription
-from . utils import USER_DEFAULT_CREDITS
+from accounts.models import User, RegisteredSubscription
+from accounts.utils import USER_DEFAULT_CREDITS
 
 
 @shared_task
@@ -19,8 +19,7 @@ def check_user_subscriptions():
                 user_subscription.save()
                 user.credits = USER_DEFAULT_CREDITS
 
-            elif user_subscription.subscription.level == 'gold' and \
-                user_subscription.credits_period == 'daily':
+            elif user_subscription.credits_period == 'daily':
                     user.credits = user_subscription.credits
         else:
             user.credits = USER_DEFAULT_CREDITS

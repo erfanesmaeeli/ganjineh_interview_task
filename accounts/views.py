@@ -12,6 +12,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from rest_framework import generics
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.permissions import (
     AllowAny,
 )
@@ -23,3 +25,14 @@ from . serializers import (
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Register a new user",
+        request_body=RegisterSerializer,
+        responses={
+            201: openapi.Response("User created successfully"),
+            400: openapi.Response("Bad request"),
+        })
+    
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)

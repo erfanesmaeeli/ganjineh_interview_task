@@ -32,6 +32,53 @@ A project Django project .
 <br>
 
 <h2>
+  Run with Docker
+</h2>
+
+<div class="highlight highlight-source-shell">
+
+  ```
+  $  docker build -t ganjineh_task_app_nginx . 
+  ```
+
+  <br>
+  
+  ```
+  $   docker build -t ganjineh_task_app .
+  ```
+
+  <br>
+  
+  ```
+  $   docker network create database_network
+  ```
+
+  <br>
+  
+  ```
+  $   docker network create redis_bridge_monitoring
+
+  ```
+ <br>
+ 
+  ```
+  $   docker build -t ganjineh_task_app_nginx:latest -f Dockerfile.nginx .
+
+  ```
+ <br>
+  
+  ```
+  $   docker-compose up -d
+  ```
+
+</div>
+
+<h3>Now you can Login with admin:admin</h3>
+
+<h2>
+  Run without Docker
+</h2>
+<h2>
   Create a new virtual environment and activate it.
 </h2>
 

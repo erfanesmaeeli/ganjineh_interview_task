@@ -1,0 +1,85 @@
+
+version: '3'
+services:
+  ganjineh_task_app:
+    image: ganjineh_task_app:latest
+    hostname: ganjineh_task_app_host
+    env_file:
+      - .env
+    command: "bash -c 'python manage.py migrate && gunicorn --config gunicorn-cfg.py core.wsgi:application'"
+    networks:
+      - database_network
+      - redis_bridge_monitoring
+      - default
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+      - ./db.sqlite3:/app/db.sqlite3
+    restart: always
+    
+  ganjineh_task_app_celery:
+    image: ganjineh_task_app:latest
+    env_file:
+      - .env
+    command: "bash -c 'celery -A core worker -l DEBUG'"
+    networks:
+      - database_network
+      - redis_bridge_monitoring
+      - default
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+      - ./db.sqlite3:/app/db.sqlite3 
+    restart: always
+
+  ganjineh_task_app_celery_beat:
+    image: ganjineh_task_app:latest
+    env_file:
+      - .env
+    command: "bash -c 'celery -A core beat -l debug'"
+    networks:
+      - database_network
+      - redis_bridge_monitoring
+      - default
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+      - ./db.sqlite3:/app/db.sqlite3
+    restart: always
+
+  ganjineh_task_app_nginx:
+    image: ganjineh_task_app_nginx:latest
+    env_file: .env
+    ports:
+      - 127.0.0.1:8085:80
+    depends_on:
+      - ganjineh_task_app
+    volumes:
+      - ./static:/home/app/microservice/static
+      - ./media:/home/app/microservice/media
+    networks:
+      - default
+      - redis_bridge_monitoring
+
+  redis:
+    image: redis:latest
+    hostname: redis_host
+    networks:
+      - database_network
+      - redis_bridge_monitoring
+      - default
+    ports:
+      - "6379:6379"
+    restart: always
+
+  
+
+
+
+networks:
+    default:
+      driver: bridge
+    database_network:
+      external: true
+    redis_bridge_monitoring:
+      external: true
