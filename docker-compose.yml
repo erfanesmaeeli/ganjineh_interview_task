@@ -36,7 +36,7 @@ services:
     image: ganjineh_task_app:latest
     env_file:
       - .env
-    command: "bash -c 'celery -A core beat -l debug'"
+    command: "bash -c 'celery -A core beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler'"
     networks:
       - database_network
       - redis_bridge_monitoring

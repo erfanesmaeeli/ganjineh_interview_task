@@ -34,6 +34,10 @@ A project Django project .
   Run with Docker
 </h2>
 
+<br>
+<h4>Ensure that have db.sqlite3 in your project<h4>
+<br>
+
 <div class="highlight highlight-source-shell">
 
   ```

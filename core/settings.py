@@ -4,6 +4,7 @@ Copyright (c) 2024 erfan esmaeeli
 
 from pathlib import Path, os
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -265,7 +266,7 @@ SIMPLE_JWT = {
 CELERY_BEAT_SCHEDULE = {
     'check_user_subscriptions': {
         'task': 'accounts.tasks.check_user_subscriptions',
-        'schedule': timedelta(seconds=10),
+        'schedule': crontab(hour=0, minute=0),
     },
 }
 
